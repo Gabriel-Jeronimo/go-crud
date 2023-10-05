@@ -1,6 +1,7 @@
 package books
 
 import (
+	"go-crud/common"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,24 @@ func BooksRegister(router *gin.RouterGroup) {
 }
 
 func BookCreate(c *gin.Context) {
+	bookModelValidator := NewBookModelValidator()
+	if err := bookModelValidator.Bind(c); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewValidatorError(err))
+		return
+	}
 
+	if err := SaveOne(&bookModelValidator.bookModel); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
+	}
+
+	serializer := BookSerializer{c, bookModelValidator.bookModel}
+	c.JSON(http.StatusCreated, gin.H{"book": serializer.Response()})
+}
+
+func SaveOne(data interface{}) error {
+	db := common.GetDB()
+	err := db.Save(data).Error
+	return err
 }
 
 func BookList(c *gin.Context) {
