@@ -18,8 +18,8 @@ func main() {
 
 	r := gin.Default()
 
-	v1 := r.Group("/v1")
-	books.BooksRegister(v1.Group("/books"))
+	api := r.Group("/api")
+	books.BooksRegister(api.Group("/books"))
 
 	testRoute := r.Group("/api/ping")
 	testRoute.GET("/", func(c *gin.Context) {

@@ -14,7 +14,7 @@ type Database struct {
 var DB *gorm.DB
 
 func Init() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("./../application.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("./application.db"), &gorm.Config{})
 	if err != nil {
 		fmt.Println("Database Error: (INIT) ", err)
 	}

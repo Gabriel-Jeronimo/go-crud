@@ -24,10 +24,11 @@ func BookCreate(c *gin.Context) {
 	}
 
 	serializer := BookSerializer{c, bookModelValidator.bookModel}
-	c.JSON(http.StatusCreated, gin.H{"book": serializer.Response()})
+	c.JSON(http.StatusCreated, gin.H{"data": serializer.Response()})
 }
 
 func SaveOne(data interface{}) error {
+
 	db := common.GetDB()
 	err := db.Save(data).Error
 	return err

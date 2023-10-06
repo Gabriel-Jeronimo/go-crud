@@ -25,7 +25,7 @@ func FindManyBook() ([]BookModel, error) {
 
 	var models []BookModel
 
-	db.Model(&models).Find(&BookModel{})
+	db.Find(&models)
 
 	return models, nil
 }
