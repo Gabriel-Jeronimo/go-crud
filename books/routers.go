@@ -1,6 +1,7 @@
 package books
 
 import (
+	"errors"
 	"go-crud/common"
 	"net/http"
 
@@ -10,6 +11,7 @@ import (
 func BooksRegister(router *gin.RouterGroup) {
 	router.POST("/", BookCreate)
 	router.GET("/", BookList)
+	router.DELETE("/:id", BookDelete)
 }
 
 func BookCreate(c *gin.Context) {
@@ -27,13 +29,6 @@ func BookCreate(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"data": serializer.Response()})
 }
 
-func SaveOne(data interface{}) error {
-
-	db := common.GetDB()
-	err := db.Save(data).Error
-	return err
-}
-
 func BookList(c *gin.Context) {
 	books, err := FindManyBook()
 
@@ -43,4 +38,23 @@ func BookList(c *gin.Context) {
 
 	serializer := BooksSerializer{c, books}
 	c.JSON(http.StatusOK, gin.H{"books": serializer.Response()})
+}
+
+func BookDelete(c *gin.Context) {
+	id := c.Param("id")
+	err := DeleteBook(&BookModel{ID: id})
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("books", errors.New("Invalid ID")))
+		return
+	}
+
+	c.JSON(http.StatusNoContent, gin.H{})
+}
+
+func SaveOne(data interface{}) error {
+
+	db := common.GetDB()
+	err := db.Save(data).Error
+	return err
 }

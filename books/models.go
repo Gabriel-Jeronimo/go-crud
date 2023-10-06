@@ -29,3 +29,9 @@ func FindManyBook() ([]BookModel, error) {
 
 	return models, nil
 }
+
+func DeleteBook(condition interface{}) error {
+	db := common.GetDB()
+	err := db.Where(condition).Delete(BookModel{}).Error
+	return err
+}
