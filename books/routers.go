@@ -33,7 +33,7 @@ func BookList(c *gin.Context) {
 	books, err := FindManyBook()
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 	}
 
 	serializer := BooksSerializer{c, books}
