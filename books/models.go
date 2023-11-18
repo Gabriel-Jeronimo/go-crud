@@ -20,6 +20,16 @@ func (bookModel *BookModel) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
+func FindByIdBook(id string) (BookModel, error) {
+	db := common.GetDB()
+
+	var model BookModel
+
+	err := db.Find(&model, BookModel{ID: id}).Error
+
+	return model, err
+}
+
 func FindManyBook() ([]BookModel, error) {
 	db := common.GetDB()
 

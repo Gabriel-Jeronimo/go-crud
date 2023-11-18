@@ -2,6 +2,7 @@ package books
 
 import (
 	"errors"
+	"fmt"
 	"go-crud/common"
 	"net/http"
 
@@ -11,7 +12,24 @@ import (
 func BooksRegister(router *gin.RouterGroup) {
 	router.POST("/", BookCreate)
 	router.GET("/", BookList)
+	router.GET("/:id", BookById)
 	router.DELETE("/:id", BookDelete)
+}
+
+func BookById(c *gin.Context) {
+	id := c.Param("id")
+
+	fmt.Printf("%s", id)
+
+	book, err := FindByIdBook(id)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, common.NewError("books", errors.New("book not found")))
+	}
+
+	serializer := BookSerializer{c, book}
+
+	c.JSON(http.StatusOK, gin.H{"book": serializer.Response()})
 }
 
 func BookCreate(c *gin.Context) {
@@ -45,7 +63,7 @@ func BookDelete(c *gin.Context) {
 	err := DeleteBook(&BookModel{ID: id})
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, common.NewError("books", errors.New("Invalid ID")))
+		c.JSON(http.StatusNotFound, common.NewError("books", errors.New("book not found")))
 		return
 	}
 
