@@ -2,7 +2,6 @@ package books
 
 import (
 	"errors"
-	"fmt"
 	"go-crud/common"
 	"net/http"
 
@@ -18,8 +17,6 @@ func BooksRegister(router *gin.RouterGroup) {
 
 func BookById(c *gin.Context) {
 	id := c.Param("id")
-
-	fmt.Printf("%s", id)
 
 	book, err := FindByIdBook(id)
 
