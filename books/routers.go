@@ -12,6 +12,7 @@ func BooksRegister(router *gin.RouterGroup) {
 	router.POST("/", BookCreate)
 	router.GET("/", BookList)
 	router.GET("/:id", BookById)
+	router.PUT("/:id", BookUpdate)
 	router.DELETE("/:id", BookDelete)
 }
 
@@ -27,6 +28,25 @@ func BookById(c *gin.Context) {
 	serializer := BookSerializer{c, book}
 
 	c.JSON(http.StatusOK, gin.H{"book": serializer.Response()})
+}
+
+func BookUpdate(c *gin.Context) {
+	bookModelValidator := NewBookModelValidator()
+
+	id := c.Param("id")
+
+	if err := bookModelValidator.Bind(c); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewValidatorError(err))
+		return
+	}
+
+	if err := UpdateBook(id, &bookModelValidator.bookModel); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, common.NewError("database", err))
+	}
+
+	bookModelValidator.bookModel.ID = id
+	serializer := BookSerializer{c, bookModelValidator.bookModel}
+	c.JSON(http.StatusCreated, gin.H{"data": serializer.Response()})
 }
 
 func BookCreate(c *gin.Context) {
